@@ -1,0 +1,21 @@
+# nature view, GBP 000
+label,FY22->FY23,FY23->FY24,FY24->FY25
+PBT start,30709.0,23705.0,14223.0
+Sales effect (at prior-year contribution rate),-1446.8,-1701.3,4312.8
+Other operating costs: rate effect,-5375.2,-7724.7,4535.2
+Staff costs,-402.0,933.0,-3452.0
+Operating lease rentals,-334.0,-694.0,-161.0
+"Depreciation, amortisation, impairment",-397.0,-1133.0,455.0
+Exchange differences,-829.0,1615.0,393.0
+Other operating income,976.0,-798.0,129.0
+Net finance income,804.0,21.0,-252.0
+PBT end,23705.0,14223.0,20183.0
+# function view, GBP 000
+label,FY22->FY23,FY23->FY24,FY24->FY25
+PBT start,30709.0,23705.0,14223.0
+Sales effect (at prior-year GM rate),-1358.0,-1568.1,3575.1
+Gross-margin-rate effect,-5841.0,-10596.9,5431.9
+Administrative expenses,-1585.0,3460.0,-2924.0
+Other operating income,976.0,-798.0,129.0
+Net finance income,804.0,21.0,-252.0
+PBT end,23705.0,14223.0,20183.0

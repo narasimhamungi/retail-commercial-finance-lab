@@ -1,0 +1,6 @@
+fiscal_year,line_item,originally_reported,comparative_in_next_filing,difference,unit,original_ref,comparative_ref
+2024,wages_salaries,16271.0,16476.0,205.0,gbp_k,FY24 accounts pdf p.33,FY25 accounts pdf p.34
+2024,social_security,1332.0,1127.0,-205.0,gbp_k,FY24 accounts pdf p.33,FY25 accounts pdf p.34
+2022,inventory_impairment,-58.0,-74.0,-16.0,gbp_k,FY22 accounts pdf p.33,FY23 accounts pdf p.33
+2022,lease_commitments_total,20067.0,8927.0,-11140.0,gbp_k,FY22 accounts pdf p.47,FY23 accounts pdf p.45
+2022,lease_commitments_within_1y,4105.0,3250.0,-855.0,gbp_k,FY22 accounts pdf p.47,FY23 accounts pdf p.45

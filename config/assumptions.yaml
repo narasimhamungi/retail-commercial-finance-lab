@@ -1,0 +1,403 @@
+# New-store appraisal inputs.
+#
+# Every input carries: value, unit, basis, low, high, and a source or rationale.
+# basis:
+#   SOURCED       read from a public source (link given); low = high = value
+#   FILING_PROXY  derived from Mint Velvet's filed accounts by the stated formula. These are
+#                 company-wide averages, not store-level data; capex, rent and stock proxies are
+#                 UPPER BOUNDS because they include head office, warehouse, refit and IT spend.
+#   ASSUMPTION    analyst assumption, not Mint Velvet data. Replace with internal figures.
+#
+# Mint Velvet's store-level economics are not public. This model shows how a new-store case is
+# built and stress-tested; its outputs are not Mint Velvet's actual store economics.
+
+meta:
+  example: "1,700 sq ft regional-mall unit"
+  price_base: "2026/27 rates; nominal cash flows, end-of-year convention, year 0 = opening"
+
+store:
+  area_sqft:
+    value: 1700
+    unit: sq ft
+    basis: SOURCED
+    low: 1700
+    high: 1700
+    source: "Store size in the July 2026 Meadowhall signing announcement (TheIndustry.fashion, 29 Jul 2026): https://www.theindustry.fashion/meadowhall-strengthens-fashion-line-up-with-mint-velvet-belstaff-and-michael-kors-deals/"
+
+  mature_sales_density:
+    value: 850
+    unit: GBP per sq ft per year (year-1 prices)
+    basis: ASSUMPTION
+    low: 600
+    high: 1100
+    source: "No public store-level sales. The model solves for the break-even density, which does not depend on this input; the base value only sets the illustrative NPV."
+
+  ramp_year1:
+    value: 0.80
+    unit: share of mature sales
+    basis: ASSUMPTION
+    low: 0.70
+    high: 0.90
+    source: "New-store sales build; year 3 onwards = 100%."
+
+  ramp_year2:
+    value: 0.95
+    unit: share of mature sales
+    basis: ASSUMPTION
+    low: 0.90
+    high: 1.00
+    source: "New-store sales build."
+
+  sales_growth:
+    value: 0.02
+    unit: per year, nominal, from year 2
+    basis: ASSUMPTION
+    low: 0.00
+    high: 0.04
+    source: "Like-for-like price/mix growth on the matured base."
+
+  product_gross_margin:
+    value: 0.7102
+    unit: share of sales
+    basis: FILING_PROXY
+    low: 0.66
+    high: 0.74
+    source: "FY22 accounts note 6 (pdf p.34): 1 - cost of stock expensed 41,639 / turnover 143,675. The only year the filings disclose cost of stock; company-wide (all channels, after markdowns). low/high are ASSUMPTION (+/-4.5pp)."
+
+  rent_per_year:
+    value: 95340
+    unit: GBP per year
+    basis: FILING_PROXY
+    low: 70000
+    high: 200000
+    source: "FY25 accounts: operating lease rentals 5,053k (note 6, pdf p.33) / 53 standalone stores (strategic report, pdf p.4). Upper bound for an average store: includes head office and any other leased property. low/high are ASSUMPTION; a super-regional mall unit can cost well above the estate average, so high is about 2x the proxy."
+
+  rent_review_uplift:
+    value: 0.10
+    unit: one-off uplift at year 6 (five-yearly review)
+    basis: ASSUMPTION
+    low: 0.00
+    high: 0.20
+    source: "Upward-only review at year 5 anniversary."
+
+  occupancy_other_psf:
+    value: 15
+    unit: GBP per sq ft per year
+    basis: ASSUMPTION
+    low: 8
+    high: 25
+    source: "Service charge, insurance, utilities. Indexed at cost_inflation."
+
+  rateable_value:
+    value: 55000
+    unit: GBP
+    basis: ASSUMPTION
+    low: 40000
+    high: 90000
+    source: "Replace with the unit's entry on the VOA 2026 rating list. Rates = RV x the 2026/27 RHL multiplier for its band (payroll_and_tax section)."
+
+  other_opex_pct_sales:
+    value: 0.10
+    unit: share of sales
+    basis: ASSUMPTION
+    low: 0.06
+    high: 0.15
+    source: "Allowance for distribution to store, shrinkage, card fees, store marketing, repairs, cleaning, security and store systems. Not a benchmark. The filings put all retail-channel costs other than staff, rent and D&A in one pool (bridge 'other operating costs'), which cannot be split to store level."
+
+  fitout_capex:
+    value: 528000
+    unit: GBP at opening
+    basis: FILING_PROXY
+    low: 323333
+    high: 931500
+    source: "FY24 accounts: tangible additions 2,640k (note 14, pdf p.37) / 5 projects (3 openings + 2 relocations, pdf p.4). Upper bound: additions also include refits, IT and head-office capex. low = FY22 (1,940k / 6 openings), high = FY23 (3,726k / 4 openings)."
+
+  pre_opening_costs:
+    value: 30000
+    unit: GBP at opening, expensed
+    basis: ASSUMPTION
+    low: 15000
+    high: 50000
+    source: "Recruitment, training, launch marketing."
+
+  stock_pct_sales:
+    value: 0.0996
+    unit: stock held as share of annual sales
+    basis: FILING_PROXY
+    low: 0.0819
+    high: 0.1242
+    source: "FY25 accounts: stocks 14,964k / turnover 150,240k (pdf p.20, p.18). Company-wide incl. warehouse and online stock, so an upper bound for one store. low = FY23, high = FY24. Released at lease end."
+
+  dilapidations_at_exit:
+    value: 26604
+    unit: GBP at lease end
+    basis: FILING_PROXY
+    low: 8271
+    high: 40000
+    source: "FY25 accounts: dilapidations provision 1,410k (note 3, pdf p.32) / 53 standalone stores. low = FY22 (397k / 48). high is ASSUMPTION."
+
+  lease_term_years:
+    value: 10
+    unit: years
+    basis: ASSUMPTION
+    low: 5
+    high: 15
+    source: "No terminal value beyond the lease term. Lease-term sensitivity shows the cost of a break at year 5."
+
+finance:
+  discount_rate:
+    value: 0.10
+    unit: nominal post-tax
+    basis: ASSUMPTION
+    low: 0.08
+    high: 0.14
+    source: "Hurdle rate for store capex; replace with the company's own."
+
+  tax_rate:
+    value: 0.25
+    unit: corporation tax main rate
+    basis: SOURCED
+    low: 0.25
+    high: 0.25
+    source: "UK corporation tax main rate 25% from 1 April 2023 (also stated in FY25 accounts note 11): https://www.gov.uk/corporation-tax-rates"
+
+  tax_depreciation_years:
+    value: 10
+    unit: years, straight line
+    basis: ASSUMPTION
+    low: 10
+    high: 10
+    source: "Simplification: fit-out relief spread over the lease. Full expensing on qualifying plant would accelerate relief and raise NPV. Store losses assumed relieved against group profits."
+
+  wage_inflation:
+    value: 0.04
+    unit: per year
+    basis: ASSUMPTION
+    low: 0.025
+    high: 0.06
+    source: "NLW rose 4.1% in April 2026 (GOV.UK); assumed to continue near that pace."
+
+  cost_inflation:
+    value: 0.025
+    unit: per year
+    basis: ASSUMPTION
+    low: 0.015
+    high: 0.04
+    source: "Indexation of rates and other occupancy costs."
+
+payroll:
+  trading_hours_per_week:
+    value: 64
+    unit: hours
+    basis: ASSUMPTION
+    low: 58
+    high: 72
+    source: "Regional mall opening hours incl. late nights and Sunday."
+
+  floor_cover:
+    value: 2
+    unit: staff on the floor at all trading hours
+    basis: ASSUMPTION
+    low: 2
+    high: 3
+    source: "Minimum safe cover for a 1,700 sq ft unit."
+
+  non_trading_hours_per_week:
+    value: 16
+    unit: staff hours
+    basis: ASSUMPTION
+    low: 8
+    high: 24
+    source: "Opening, closing, deliveries, replenishment."
+
+  managers:
+    value: 2
+    unit: salaried managers (store + assistant)
+    basis: ASSUMPTION
+    low: 2
+    high: 2
+    source: "Store manager and assistant manager."
+
+  manager_floor_hours_per_week:
+    value: 30
+    unit: hours per manager counted toward floor cover
+    basis: ASSUMPTION
+    low: 25
+    high: 35
+    source: "Contracted 40 hours, of which 30 on the floor."
+
+  manager_contract_hours_per_week:
+    value: 40
+    unit: hours
+    basis: ASSUMPTION
+    low: 40
+    high: 40
+    source: "Used for sales per labour hour."
+
+  store_manager_salary:
+    value: 36000
+    unit: GBP per year
+    basis: ASSUMPTION
+    low: 32000
+    high: 42000
+    source: "Base salary, before employer on-costs."
+
+  assistant_manager_salary:
+    value: 28000
+    unit: GBP per year
+    basis: ASSUMPTION
+    low: 25000
+    high: 31000
+    source: "Base salary, before employer on-costs."
+
+  associate_contract_hours_per_week:
+    value: 20
+    unit: hours
+    basis: ASSUMPTION
+    low: 16
+    high: 30
+    source: "Part-time contracts; sets earnings per head, which drives NIC and pension thresholds."
+
+  associate_premium_over_nlw:
+    value: 0.05
+    unit: share above NLW
+    basis: ASSUMPTION
+    low: 0.00
+    high: 0.15
+    source: "Premium-brand sales associate rate."
+
+  variable_hours_per_k_sales:
+    value: 1.5
+    unit: associate hours per GBP 1,000 of mature sales (year-1 prices)
+    basis: ASSUMPTION
+    low: 1.0
+    high: 2.0
+    source: "Hours added above minimum cover as sales volume rises."
+
+payroll_and_tax:
+  nlw_hourly:
+    value: 12.71
+    unit: GBP per hour, age 21+, from 1 April 2026
+    basis: SOURCED
+    low: 12.71
+    high: 12.71
+    source: "https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2026-to-2027"
+
+  employer_nic_rate:
+    value: 0.15
+    unit: Class 1 secondary rate, 2026/27
+    basis: SOURCED
+    low: 0.15
+    high: 0.15
+    source: "https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2026-to-2027"
+
+  nic_secondary_threshold:
+    value: 5000
+    unit: GBP per year, 2026/27
+    basis: SOURCED
+    low: 5000
+    high: 5000
+    source: "https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2026-to-2027"
+
+  employer_nic_rate_2024_25:
+    value: 0.138
+    unit: Class 1 secondary rate before 6 April 2025 (comparison only)
+    basis: SOURCED
+    low: 0.138
+    high: 0.138
+    source: "https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2024-to-2025"
+
+  nic_secondary_threshold_2024_25:
+    value: 9100
+    unit: GBP per year before 6 April 2025 (comparison only)
+    basis: SOURCED
+    low: 9100
+    high: 9100
+    source: "https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2024-to-2025"
+
+  pension_employer_rate:
+    value: 0.03
+    unit: minimum employer contribution on qualifying earnings
+    basis: SOURCED
+    low: 0.03
+    high: 0.03
+    source: "https://www.gov.uk/workplace-pensions/what-you-your-employer-and-the-government-pay"
+
+  pension_qe_lower:
+    value: 6240
+    unit: GBP per year, 2026/27 (frozen)
+    basis: SOURCED
+    low: 6240
+    high: 6240
+    source: "https://www.gov.uk/government/publications/review-of-the-automatic-enrolment-earnings-trigger-and-qualifying-earnings-band-for-202627/review-of-the-automatic-enrolment-earnings-trigger-and-qualifying-earnings-band-for-202627"
+
+  pension_qe_upper:
+    value: 50270
+    unit: GBP per year, 2026/27 (frozen)
+    basis: SOURCED
+    low: 50270
+    high: 50270
+    source: "https://www.gov.uk/government/publications/review-of-the-automatic-enrolment-earnings-trigger-and-qualifying-earnings-band-for-202627/review-of-the-automatic-enrolment-earnings-trigger-and-qualifying-earnings-band-for-202627"
+
+  pension_trigger:
+    value: 10000
+    unit: GBP per year, auto-enrolment earnings trigger 2026/27 (frozen)
+    basis: SOURCED
+    low: 10000
+    high: 10000
+    source: "https://www.gov.uk/government/publications/review-of-the-automatic-enrolment-earnings-trigger-and-qualifying-earnings-band-for-202627/review-of-the-automatic-enrolment-earnings-trigger-and-qualifying-earnings-band-for-202627"
+
+  holiday_weeks:
+    value: 5.6
+    unit: statutory weeks per year
+    basis: SOURCED
+    low: 5.6
+    high: 5.6
+    source: "https://www.gov.uk/holiday-entitlement-rights. Cost uplift per hour worked = 5.6 / (52 - 5.6) = 12.07%."
+
+  rates_multiplier_rhl_small:
+    value: 0.382
+    unit: GBP per GBP of RV, retail/hospitality/leisure, RV below 51,000, 2026/27
+    basis: SOURCED
+    low: 0.382
+    high: 0.382
+    source: "England 2026/27 multipliers, e.g. https://www.spelthorne.gov.uk/page/661/business-rates-multipliers-20262027"
+
+  rates_multiplier_rhl_standard:
+    value: 0.430
+    unit: GBP per GBP of RV, RHL, RV 51,000 to 499,999, 2026/27
+    basis: SOURCED
+    low: 0.430
+    high: 0.430
+    source: "England 2026/27 multipliers, e.g. https://www.spelthorne.gov.uk/page/661/business-rates-multipliers-20262027"
+
+  rates_multiplier_high_value:
+    value: 0.508
+    unit: GBP per GBP of RV, all properties RV 500,000+, 2026/27
+    basis: SOURCED
+    low: 0.508
+    high: 0.508
+    source: "England 2026/27 multipliers, e.g. https://www.spelthorne.gov.uk/page/661/business-rates-multipliers-20262027"
+
+scenarios:
+  # Each scenario overrides inputs with their documented low/high bound.
+  downside:
+    mature_sales_density: low
+    product_gross_margin: low
+    rent_per_year: high
+    fitout_capex: high
+    ramp_year1: low
+    ramp_year2: low
+  upside:
+    mature_sales_density: high
+    product_gross_margin: high
+    rent_per_year: low
+    fitout_capex: low
+    ramp_year1: high
+    ramp_year2: high
+
+tornado:
+  # Brief: +/-20% on density, gross margin, rent, payroll and ramp-up speed.
+  # Ramp-up speed +/-20% scales the year-1 and year-2 shortfall to maturity, (1 - ramp).
+  shock: 0.20
+  drivers: [mature_sales_density, product_gross_margin, rent_per_year, payroll, ramp_speed]
