@@ -49,3 +49,11 @@ def test_other_cost_pool_reported_and_sane():
     y22 = t[(t.fiscal_year == 2022)].iloc[0]
     # FY22 pool must exceed the disclosed cost of stock, which it contains.
     assert y22.other_costs_k > ledger.value("cost_of_stock_expensed", 2022)
+
+
+def test_csv_writer_rounds_floats_and_drops_negative_zero(tmp_path):
+    import pandas as pd
+    from rcfl import report
+    df = pd.DataFrame({"x": [-1358.047948494867, -3.637978807091713e-12], "n": [1, 2], "s": ["a", "b"]})
+    report._csv(df, tmp_path / "o.csv", index=False)
+    assert (tmp_path / "o.csv").read_text(encoding="utf-8").splitlines() == ["x,n,s", "-1358.0479484949,1,a", "0.0,2,b"]

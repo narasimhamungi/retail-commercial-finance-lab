@@ -561,26 +561,35 @@ def build_pdf(f: dict) -> None:
 
 # --------------------------------------------------------------------------------------------
 
+def _csv(df: pd.DataFrame, path, **kw) -> None:
+    """Write a CSV with floats rounded to 10 decimal places: the last binary digit of a float sum differs
+    between platforms and Python versions, and unrounded output would then differ from run to run."""
+    out = df.copy()
+    floats = out.select_dtypes("float").columns
+    out[floats] = out[floats].round(10) + 0.0          # + 0.0 turns a rounded -0.0 into 0.0
+    out.to_csv(path, **kw)
+
+
 def run(verify: bool = True) -> None:
     paths.ensure_dirs()
     cfg = store_model.load_config()
     ver = extract.verify_ledger() if verify else ledger.load().assign(status="not_run", detail="")
     br = bridge.build()
-    br.to_csv(paths.OUTPUTS / "bridge.csv", index=False)
+    _csv(br, paths.OUTPUTS / "bridge.csv", index=False)
     with open(paths.OUTPUTS / "bridge_table.csv", "w", encoding="utf-8") as fh:
         for basis in ("nature", "function"):
             fh.write(f"# {basis} view, GBP 000\n")
             bridge.pivot(br, basis).round(1).to_csv(fh)
-    bridge.other_pool_table().to_csv(paths.OUTPUTS / "other_cost_pool.csv", index=False)
-    ratios.build().to_csv(paths.OUTPUTS / "ratios.csv", index=False)
-    ratios.ebitda_check().to_csv(paths.OUTPUTS / "adjusted_ebitda_reconciliation.csv", index=False)
-    market.relative_performance().to_csv(paths.OUTPUTS / "market_context.csv", index=False)
+    _csv(bridge.other_pool_table(), paths.OUTPUTS / "other_cost_pool.csv", index=False)
+    _csv(ratios.build(), paths.OUTPUTS / "ratios.csv", index=False)
+    _csv(ratios.ebitda_check(), paths.OUTPUTS / "adjusted_ebitda_reconciliation.csv", index=False)
+    _csv(market.relative_performance(), paths.OUTPUTS / "market_context.csv", index=False)
     sm = store_model.summary(cfg)
-    pd.DataFrame(sm).T.to_csv(paths.OUTPUTS / "store_model_summary.csv")
+    _csv(pd.DataFrame(sm).T, paths.OUTPUTS / "store_model_summary.csv")
     r = store_model.run(store_model.scenario_case(cfg, "base"))
-    pd.DataFrame({k: getattr(r, k) for k in ("years", "sales", "gross_margin", "payroll", "rent", "rates", "occupancy_other",
-                                             "other_opex", "store_ebitda", "pre_opening", "tax", "capex", "wc_change",
-                                             "dilapidations", "fcf")}).to_csv(paths.OUTPUTS / "store_pnl_base.csv", index=False)
+    _csv(pd.DataFrame({k: getattr(r, k) for k in ("years", "sales", "gross_margin", "payroll", "rent", "rates", "occupancy_other",
+                                                  "other_opex", "store_ebitda", "pre_opening", "tax", "capex", "wc_change",
+                                                  "dilapidations", "fcf")}), paths.OUTPUTS / "store_pnl_base.csv", index=False)
     f = facts()
     (paths.DOCS / "findings.md").write_text(findings_md(f), encoding="utf-8")
     (paths.DOCS / "source_registry.md").write_text(registry_md(ver), encoding="utf-8")
